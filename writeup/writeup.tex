@@ -52,14 +52,12 @@
     showspaces=false,
     showstringspaces=false,
     showtabs=false,
-    tabsize=2
+    tabsize=2,
+    extendedchars=true,
+    literate={~} {$\sim$}{1} {♠} {$\spadesuit$}1 {♣} {$\clubsuit$}1 {♥} {$\heartsuit$}1 {♦} {$\diamondsuit$}1
 }
 
 \lstset{style=mystyle}
-
-\lstset{
-    literate={~} {$\sim$}{1}
-}
 
 \begin{document}
     \maketitle
@@ -171,5 +169,22 @@
     don't, a two-card penalty is inflicted. If the player is playing a series
     of cards (using 7s, or sets) and they forget last card, they take back
     their last card and two penalty cards. They may not continue to play.
+
+    \section{Implementation}
+
+\lstinputlisting[language=Pascal, caption=UCard.pas]
+{../src/UCard.pas}
+\lstinputlisting[language=Pascal, caption=UPack.pas]
+{../src/UPack.pas}
+\lstinputlisting[language=Pascal, caption=UHand.pas]
+{../src/UHand.pas}
+\lstinputlisting[language=Pascal, caption=UUIQuerier.pas]
+{../src/UUIQuerier.pas}
+\lstinputlisting[language=Pascal, caption=UGame.pas]
+{../src/UGame.pas}
+\lstinputlisting[language=Pascal, caption=UUI.pas]
+{../src/UUI.pas}
+\lstinputlisting[language=Pascal, caption=UGameHandler.pas]
+{../src/UGameHandler.pas}
 
 \end{document}

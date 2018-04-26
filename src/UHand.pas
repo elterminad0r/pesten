@@ -7,7 +7,7 @@ interface
 uses SysUtils, UCard;
 
 type
-    TKeyArray = array[0..51] of integer;
+    TKeyArray = array of integer;
 
     type THand = class
         protected 
@@ -58,7 +58,7 @@ end;
 
 procedure THand.PushCard(card: TCard);
 begin
-    if size > 51 then
+    if size > cards.length - 1 then
         raise ECardError.create('can''t add card to hand as it is full');
     cards[size] := card;
     inc(size);
@@ -83,7 +83,7 @@ procedure THand.InsertCard(card: TCard; i: integer);
 var
     j: integer;
 begin
-    if size > 51 then
+    if size > cards.length - 1 then
         raise ECardError.create('can''t add card to hand as it is full');
     if (i < 0) or (i >= size) then
         raise ECardError.create('can''t add card, this is an invalid index');
@@ -187,9 +187,11 @@ var
     keybuf, keys: TKeyArray;
     i: integer;
 begin
-    for i := 0 to 51 do
+    keys.setlength(cards.length);
+    keybuf.setlength(cards.length);
+    for i := 0 to cards.length - 1 do
         keys[i] := keyfunc(cards[i]);
-    Sort(cardbuf, keybuf, keys, 0, 52);
+    Sort(cardbuf, keybuf, keys, 0, cards.length);
 end;
 
 function _GetScore(card: TCard): integer;

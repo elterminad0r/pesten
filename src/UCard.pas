@@ -31,7 +31,7 @@ type
             function GetShortName: string;
     end;
 
-    TCardArray = array[0..51] of TCard;
+    TCardArray = array of TCard;
     TCardKeyFunc = function(card: TCard): integer;
 
 function proper_mod(a, b: integer): integer;

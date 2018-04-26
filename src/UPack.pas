@@ -11,10 +11,10 @@ type
         private
             cards: TCardArray;
             all_cards: TCardArray;
-            bottom, ncards: integer;
+            bottom, ncards, num_packs: integer;
             procedure Populate;
         public
-            constructor Create;
+            constructor Create(n: integer);
             destructor Free;
             function GetSize: integer;
             procedure Shuffle;
@@ -24,10 +24,12 @@ type
 
 implementation
 
-constructor TPack.Create;
+constructor TPack.Create(n: integer);
 begin
     bottom := 0;
-    ncards := 52;
+    ncards := 52 * n;
+    num_packs := n;
+    cards.setlength(ncards);
     Populate;
     Shuffle;
 end;
@@ -47,12 +49,13 @@ end;
 
 procedure TPack.Populate;
 var
-    i: integer;
+    i, j: integer;
 begin
-    for i := 0 to 51 do begin
-        cards[i] := TCard.create(i mod 13, i div 13);
-        all_cards[i] := cards[i];
-    end;
+    for j := 0 to num_packs - 1 do
+        for i := 0 to 51 do begin
+            cards[i] := TCard.create(i mod 13, i div 13);
+            all_cards[i] := cards[i];
+        end;
 end;
 
 procedure TPack.Shuffle;
@@ -61,8 +64,8 @@ var
     temp: TCard;
 begin
     for i := ncards - 1 downto 1 do begin
-        ind_a := proper_mod(random(i) + bottom, 52);
-        ind_b := proper_mod(i, 52);
+        ind_a := proper_mod(random(i) + bottom, cards.length);
+        ind_b := proper_mod(i, cards.length);
         temp := cards[ind_b];
         cards[ind_b] := cards[ind_a];
         cards[ind_a] := temp;
@@ -74,18 +77,18 @@ begin
     if ncards = 0 then
         raise ECardError.create('can''t deal card as pack is empty')
     else begin
-        result := cards[proper_mod(bottom + ncards, 52)];    
+        result := cards[proper_mod(bottom + ncards, cards.length)];
         dec(ncards);
     end;
 end;
 
 procedure TPack.ReturnCard(card: TCard);
 begin
-    if ncards = 52 then
+    if ncards = cards.length then
         raise ECardError.create('can''t return card as pack is full')
     else begin
         cards[bottom] := card;
-        bottom := proper_mod(bottom - 1, 52);
+        bottom := proper_mod(bottom - 1, cards.length);
         inc(ncards)
     end;
 end;
