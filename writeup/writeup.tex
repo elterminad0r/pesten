@@ -4,6 +4,8 @@
 
 \usepackage{fullpage}
 
+\usepackage{pdfpages}
+
 \usepackage[hidelinks]{hyperref}
 
 \usepackage{longtable}
@@ -107,7 +109,7 @@
     play their own joker, which increases the count to 10 and moves to the next
     player. The player who ends up taking the cards may decide on the initial
     suit after the joker, but may not play. Play goes to the next player after
-    the suit has been decided.
+    the suit has been decided. \label{card:joker}
     \\ 2 &
     The following player must take 2 cards. If the following player has a 2,
     they may play it and then the total number of cards to be taken is 4, by
@@ -140,7 +142,7 @@
 
     Any unmentioned cards are not special.
 
-    \subsection{Card sets}
+    \subsection{Card sets} \label{rule:sets}
 
     A player may also play a `set' of cards. A set of cards is either three or
     more of the same rank, or three or more adjacent cards of the same suit in
@@ -162,7 +164,7 @@
     If a card set is played while a 2-stack is building, only the last card of
     the set contributes to the number to be picked up.
 
-    \subsection{Last (card), but not least}
+    \subsection{Last (card), but not least} \label{rule:lastcard}
 
     As soon as a player reaches their last card, they must tap the table twice
     and declare `last card' with appropriate volume and enthusiasm. If they
@@ -170,7 +172,26 @@
     of cards (using 7s, or sets) and they forget last card, they take back
     their last card and two penalty cards. They may not continue to play.
 
+    \section{Class hierarchy}
+
+    Here is my wonky UML:
+
+\includepdf[pages=-]{classes.pdf}
+
     \section{Implementation}
+
+%TODO add url
+
+    All source code in Pascal and \LaTeX\ can be found at \url{github.com}.
+
+    This assignment's total source clocs
+    \footnote{Count Lines of Code \url{https://github.com/AlDanial/cloc}.  This
+    waffle was included for the pun and because I wanted to see if I could load
+    the loc count into a \LaTeX\ engine at compile time. Turns out I can.}
+    in at
+    \input{|"cloc ../src | gawk --field-separator ' +' '/^SUM/{print $NF}'"}loc
+    (this \TeX\ document is an extra
+    \input{|"cloc . | gawk --field-separator ' +' '/^TeX/{print $NF}'"}loc).
 
 \lstinputlisting[language=Pascal, caption=UCard.pas]
 {../src/UCard.pas}
@@ -182,9 +203,85 @@
 {../src/UUIQuerier.pas}
 \lstinputlisting[language=Pascal, caption=UGame.pas]
 {../src/UGame.pas}
+\lstinputlisting[language=Pascal, caption=UPlayer.pas]
+{../src/UPlayer.pas}
 \lstinputlisting[language=Pascal, caption=UUI.pas]
 {../src/UUI.pas}
 \lstinputlisting[language=Pascal, caption=UGameHandler.pas]
 {../src/UGameHandler.pas}
+\lstinputlisting[language=Pascal, caption=PPesten.pas]
+{../src/PPesten.pas}
+
+    \section{Usage}
+
+\begin{lstlisting}[caption=Initialisation routine]
+How many packs?
+Enter integer > 2
+Which player number deals?
+Enter integer > 1
+How many players?
+Enter integer > 3
+\end{lstlisting}
+
+    After this point the program sends the terminal the escape code for screen
+    clearance, so an empty screen appears:
+
+\begin{lstlisting}[caption=User taking a turn]
+This is pesten, see the pdf. Cards denoted as ([23456789TJQKA][SCHD]|take)
+history:
+Game start
+Game start
+Game start
+Game start
+Game start
+Player 1 plays a Six of Hearts
+Top of discard is Six of Hearts
+
+Your hand is: Hand(6C, 3H, 2D, 9H, KD, TH, 7D)
+What card would you like to play?
+Enter text > 3H
+...
+\end{lstlisting}
+
+    \section{Regrets/todo}
+
+    This assignment is absolutely incomplete, for no particularly good reason
+    other than time constraints and other things competing for my attention.
+
+    \begin{itemize}
+    \item User interface wise:
+        \begin{itemize}
+        \item I would have liked to implement a nicer UI (IUI interface) with
+        ncurses or a GUI toolkit like GTK+
+        \item This would go hand in hand with a better communication protocol
+        between game engine and IUI, likely using XML.
+        \item I would also liked to have implemented proper user security using
+        a password scheme, with cryptographically secure hashing algorithms. A
+        user would only be allowed to see their private information with this
+        password, resulting in a genuinely fair solution for a one-screen card
+        game.
+        \item It would also have been cool for the program to automatically
+        generate possible moves, or at least detect when the user can't play and
+        pick up a card for them.
+        \end{itemize}
+    \item The program is functional, but edge cases remain largely unaccounted
+    for:
+        \begin{itemize}
+        \item The pack running out of cards just results in an access violation.
+        \item Entering a negative user index results in catastrophic failure.
+        \item Entering a maliciously large number of packs results in either
+        conversion error or dumb memory consumption likely resulting in kernel
+        killing.
+        \end{itemize}
+    The list goes on.
+    \item Various rules remain unimplemented:
+        \begin{itemize}
+        \item There isn't a joker card, let alone a handling mechanism for the
+        rule (see \ref{card:joker}).
+        \item Sets of cards aren't implemented (see \ref{rule:sets}).
+        \item I haven't even thought of way to capure the ``last card'' rule
+        (see \ref{rule:lastcard}).
+        \end{itemize}
+    \end{itemize}
 
 \end{document}

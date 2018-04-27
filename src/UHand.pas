@@ -10,21 +10,26 @@ type
     TKeyArray = array of integer;
 
     type THand = class
-        protected 
+        protected
             cards: TCardArray;
             size: integer;
             procedure Sort(cardbuf: TCardArray; keybuf, keys: TKeyArray; lower, upper: integer);
             procedure Merge(cardbuf: TCardArray; keybuf, keys: TKeyArray; lower, mid, upper: integer);
         public
-            constructor Create;
+            constructor Create(max_pack_size: integer);
             function GetSize: integer;
             function Display: string;
             procedure PushCard(card: TCard);
             procedure InsertCard(card: TCard; i: integer);
             function RemoveCard(i: integer): TCard;
+            function FindCard(cardscore: integer): integer;
+            function FindCard(cardname: string): integer;
             function PopCard: TCard;
+            function PopCard(cardscore: integer): TCard;
+            function PopCard(cardstring: string): TCard;
             procedure ClearHand;
             function ViewCard(i: integer): TCard;
+            function ViewCard(cardname: string): TCard;
             function TopCard: TCard;
             procedure SwapCards(i, j: integer);
             procedure Sort(keyfunc: TCardKeyFunc);
@@ -34,9 +39,10 @@ type
 
 implementation
 
-constructor THand.Create;
+constructor THand.Create(max_pack_size: integer);
 begin
     size := 0;
+    setlength(cards, max_pack_size);
 end;
 
 function THand.GetSize: integer;
@@ -58,20 +64,44 @@ end;
 
 procedure THand.PushCard(card: TCard);
 begin
-    if size > cards.length - 1 then
-        raise ECardError.create('can''t add card to hand as it is full');
     cards[size] := card;
     inc(size);
 end;
 
 function THand.PopCard: TCard;
 begin
-    if size = 0 then
-        raise ECardError.create('can''t discard as hand is empty')
-    else begin
-        result := cards[size - 1];
-        dec(size);
-    end;
+    result := cards[size - 1];
+    dec(size);
+end;
+
+function THand.FindCard(cardscore: integer): integer;
+var
+    i: integer;
+begin
+    result := -1;
+    for i := 0 to size - 1 do
+        if cards[i].GetScore = cardscore then
+            result := 1;
+end;
+
+function THand.FindCard(cardname: string): integer;
+var
+    i: integer;
+begin
+    result := -1;
+    for i := 0 to size - 1 do
+        if cards[i].GetShortName = cardname then
+            result := 1;
+end;
+
+function THand.PopCard(cardscore: integer): TCard;
+begin
+    result := RemoveCard(FindCard(cardscore));
+end;
+
+function THand.PopCard(cardstring: string): TCard;
+begin
+    result := RemoveCard(FindCard(cardstring));
 end;
 
 procedure THand.ClearHand;
@@ -83,10 +113,6 @@ procedure THand.InsertCard(card: TCard; i: integer);
 var
     j: integer;
 begin
-    if size > cards.length - 1 then
-        raise ECardError.create('can''t add card to hand as it is full');
-    if (i < 0) or (i >= size) then
-        raise ECardError.create('can''t add card, this is an invalid index');
     for j := size downto i + 1 do
         cards[j] := cards[j - 1];
     cards[i] := card;
@@ -95,10 +121,6 @@ end;
 
 function THand.RemoveCard(i: integer): TCard;
 begin
-    if size = 0 then
-        raise ECardError.create('can''t remove card, this hand is empty');
-    if (i < 0) or (i >= size) then
-        raise ECardError.create('can''t add card, this is an invalid index');
     result := cards[i];
     for i := i to size - 2 do
         cards[i] := cards[i + 1];
@@ -107,10 +129,12 @@ end;
 
 function THand.ViewCard(i: integer): TCard;
 begin
-    if (i >= size) or (i < 0) then
-        raise ECardError.create('can''t view card outside of range')
-    else
-        result := cards[i];
+    result := cards[i];
+end;
+
+function THand.ViewCard(cardname: string): TCard;
+begin
+    result := cards[FindCard(cardname)];
 end;
 
 function THand.TopCard: TCard;
@@ -122,12 +146,9 @@ procedure THand.SwapCards(i, j: integer);
 var
     tmp_card: TCard;
 begin
-    if (i >= size) or (j >= size) then
-        raise ECardError.create('can''t swap card outside of range')
-    else
-        tmp_card := cards[i];
-        cards[i] := cards[j];
-        cards[j] := tmp_card;
+    tmp_card := cards[i];
+    cards[i] := cards[j];
+    cards[j] := tmp_card;
 end;
 
 procedure THand.Sort(cardbuf: TCardArray; keybuf, keys: TKeyArray; lower, upper: integer);
@@ -187,11 +208,12 @@ var
     keybuf, keys: TKeyArray;
     i: integer;
 begin
-    keys.setlength(cards.length);
-    keybuf.setlength(cards.length);
-    for i := 0 to cards.length - 1 do
+    setlength(keys, length(cards));
+    setlength(keybuf, length(cards));
+    setlength(cardbuf, length(cards));
+    for i := 0 to length(cards) - 1 do
         keys[i] := keyfunc(cards[i]);
-    Sort(cardbuf, keybuf, keys, 0, cards.length);
+    Sort(cardbuf, keybuf, keys, 0, length(cards));
 end;
 
 function _GetScore(card: TCard): integer;

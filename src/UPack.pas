@@ -8,18 +8,18 @@ uses SysUtils, UCard;
 
 type
     TPack = class
-        private
-            cards: TCardArray;
-            all_cards: TCardArray;
-            bottom, ncards, num_packs: integer;
-            procedure Populate;
-        public
-            constructor Create(n: integer);
-            destructor Free;
-            function GetSize: integer;
-            procedure Shuffle;
-            function Deal: TCard;
-            procedure ReturnCard(card: TCard);
+    protected
+        cards, all_cards: TCardArray;
+        bottom, ncards, num_packs: integer;
+        procedure Populate;
+    public
+        constructor Create(n: integer);
+        destructor Destroy; override;
+        function GetSize: integer;
+        function GetMaxSize: integer;
+        procedure Shuffle;
+        function Deal: TCard;
+        procedure ReturnCard(card: TCard);
     end;
 
 implementation
@@ -29,12 +29,13 @@ begin
     bottom := 0;
     ncards := 52 * n;
     num_packs := n;
-    cards.setlength(ncards);
+    setlength(cards, ncards);
+    setlength(all_cards, ncards);
     Populate;
     Shuffle;
 end;
 
-destructor TPack.Free;
+destructor TPack.Destroy;
 var
     i: integer;
 begin
@@ -47,14 +48,19 @@ begin
     result := ncards;
 end;
 
+function TPack.GetMaxSize: integer;
+begin
+    result := length(cards);
+end;
+
 procedure TPack.Populate;
 var
     i, j: integer;
 begin
     for j := 0 to num_packs - 1 do
         for i := 0 to 51 do begin
-            cards[i] := TCard.create(i mod 13, i div 13);
-            all_cards[i] := cards[i];
+            cards[j * 52 + i] := TCard.create(i mod 13, i div 13);
+            all_cards[j * 52 + i] := cards[j * 52 + i];
         end;
 end;
 
@@ -64,8 +70,8 @@ var
     temp: TCard;
 begin
     for i := ncards - 1 downto 1 do begin
-        ind_a := proper_mod(random(i) + bottom, cards.length);
-        ind_b := proper_mod(i, cards.length);
+        ind_a := proper_mod(random(i) + bottom, length(cards));
+        ind_b := proper_mod(i, length(cards));
         temp := cards[ind_b];
         cards[ind_b] := cards[ind_a];
         cards[ind_a] := temp;
@@ -74,23 +80,15 @@ end;
 
 function TPack.Deal: TCard;
 begin
-    if ncards = 0 then
-        raise ECardError.create('can''t deal card as pack is empty')
-    else begin
-        result := cards[proper_mod(bottom + ncards, cards.length)];
-        dec(ncards);
-    end;
+    result := cards[proper_mod(bottom + ncards - 1, length(cards))];
+    dec(ncards);
 end;
 
 procedure TPack.ReturnCard(card: TCard);
 begin
-    if ncards = cards.length then
-        raise ECardError.create('can''t return card as pack is full')
-    else begin
-        cards[bottom] := card;
-        bottom := proper_mod(bottom - 1, cards.length);
-        inc(ncards)
-    end;
+    cards[bottom] := card;
+    bottom := proper_mod(bottom - 1, length(cards));
+    inc(ncards)
 end;
 
 initialization

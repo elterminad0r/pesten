@@ -8,7 +8,7 @@ uses SysUtils;
 
 const
     suits: array[0..3] of string = ('Spades', 'Clubs', 'Hearts', 'Diamonds');
-    char_suits: array[0..3] of string = ('♠', '♣', '♥', '♦');
+    char_suits: array[0..3] of string = ('S', 'C', 'H', 'D');
     ranks: array[0..12] of string =
                         ('Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
                          'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King');
@@ -16,10 +16,8 @@ const
                                         '8', '9', 'T', 'J', 'Q', 'K');
 
 type
-    ECardError = class(Exception);
-
     TCard = class
-        private
+        protected
             Rank, Suit: Integer;
         public
             constructor Create(r, s: integer);

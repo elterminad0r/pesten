@@ -1,12 +1,14 @@
-unit UGameHandler;
+{$MODE OBJFPC}
 
-uses UUI;
+unit UGameHandler;
 
 interface
 
+uses UUI, UGame;
+
 type
     TGameHandler = class
-    private
+    protected
         UI: IUI;
         game_engine: IGame;
     public
@@ -16,4 +18,21 @@ type
 
 implementation
 
+constructor TGameHandler.Create(ui_var: IUI; game_var: IGame);
+begin
+    UI := ui_var;
+    game_engine := game_var;
+end;
 
+procedure TGameHandler.Play;
+begin
+    while True do begin
+        UI.ClearScreen;
+        UI.DisplayText(game_engine.GetHelp);
+        UI.DisplayText(game_engine.GetGlobalState);
+        UI.DisplayText(game_engine.GetPrivateState);
+        game_engine.HandleTurn(UI);
+    end;
+end;
+
+end.
