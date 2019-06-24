@@ -1,0 +1,92 @@
+% Style file for my writeup
+
+% so the title can be accessed by fancyhdr (and is automatically correctly
+% spelled etc)
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\makeatother
+
+% more advanced handling of utf8 and fonts or something. apparently good to have
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+% Set document layout
+\RequirePackage[
+    margin=1in,
+    headheight=13.6pt]{geometry}
+
+% custom document header/footer
+\RequirePackage{fancyhdr}
+\RequirePackage{lastpage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\rightmark}
+\fancyfoot[L]{\theauthor\ (\thetitle)}
+\fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
+
+% better fonts, apparently
+\RequirePackage{lmodern}
+
+% Allow hyperlinks in the text, but don't make them conspicuous. This also
+% automatically makes the table of contents and references in the text
+% clickable.
+\RequirePackage[hidelinks]{hyperref}
+
+\RequirePackage[nottoc]{tocbibind}
+
+% Maths stuff, superseding amsmath
+\RequirePackage{mathtools}
+% Set theory symbols
+\RequirePackage{amssymb}
+% Define an \abs{} command for absolute value (used for cardinality)
+\DeclarePairedDelimiter\abs\lvert\rvert
+
+% Don't indent the start of paragraphs
+\RequirePackage[parfill]{parskip}
+
+% Making pictures
+\RequirePackage{graphicx}
+
+\graphicspath{ {images/} }
+
+% for embedding other PDFS
+\RequirePackage{pdfpages}
+
+% pretty tables
+\RequirePackage{longtable}
+\RequirePackage{booktabs}
+
+% Basic set-up to generate code listings. Nowadays I actually use Minted instead
+% of listings, mostly with \inputminted to directly grap the code from a source
+% file, but this works fine. Make sure the basic style uses \ttfamily, and the
+% colours look ok.
+\RequirePackage{listings}
+\RequirePackage{color}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{white},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\RequirePackage[square]{natbib}

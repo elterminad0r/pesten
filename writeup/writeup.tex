@@ -1,72 +1,16 @@
-\documentclass{article}
+\documentclass[fleqn,a4paper,11pt]{article}
 \title{Pesten}
 \author{Izaak van Dongen}
 
-\usepackage{fullpage}
-
-\usepackage{pdfpages}
-
-\usepackage[hidelinks]{hyperref}
-
-\usepackage{longtable}
-\usepackage{booktabs}
-
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{commath}
-
-\usepackage{courier}
-
-\usepackage[nottoc]{tocbibind}
-
-\usepackage[parfill]{parskip}
-
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-
-\usepackage[square]{natbib}
-
-\usepackage{graphicx}
-
-\graphicspath{ {images/} }
-
-\usepackage{listings}
-\usepackage{color}
-
-\definecolor{codegreen}{rgb}{ 0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\footnotesize,
-    breaklines=true,
-    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
-    captionpos=b,
-    keepspaces=true,
-    numbers=left,
-    numbersep=5pt,
-    showspaces=false,
-    showstringspaces=false,
-    showtabs=false,
-    tabsize=2,
-    extendedchars=true,
-    literate={~} {$\sim$}{1} {♠} {$\spadesuit$}1 {♣} {$\clubsuit$}1 {♥} {$\heartsuit$}1 {♦} {$\diamondsuit$}1
-}
-
-\lstset{style=mystyle}
+\usepackage{mysty}
 
 \begin{document}
-    \maketitle
+    \maketitle\thispagestyle{empty} % no page number under title
     \tableofcontents
     \lstlistoflistings
 
     \section{Introduction}
+
     Pesten is a classic Dutch card game, similar to Uno but played with playing
     cards. The name translates as something like `bothering'. The objective is
     to annoy your fellow players as much as possible. The suits function as
@@ -80,7 +24,9 @@
     depending on how many players there are.
 
     \section{Rules}
+
     \subsection{Basic play}
+
     The basic functioning of the game is, as mentioned, very similar to Uno.
     There is a discard pile and a pickup pile. The top card of the discard pile
     determines the current player's allowable discards. A player is allowed to
@@ -147,18 +93,18 @@
     A player may also play a `set' of cards. A set of cards is either three or
     more of the same rank, or three or more adjacent cards of the same suit in
     ascending or descending order. For example, one might play
-    $6\ \clubsuit, 6\ \diamondsuit, 6\ \spadesuit$, or
-    $6\ \clubsuit, 5\ \clubsuit, 4\ \clubsuit$. NB for the purpose of these
+    \(6\ \clubsuit, 6\ \diamondsuit, 6\ \spadesuit\), or
+    \(6\ \clubsuit, 5\ \clubsuit, 4\ \clubsuit\). NB for the purpose of these
     sets, aces are considered to be both before 2 and after the King.
 
     A set must contain at least three cards following the pattern. However, the
     play of two cards is permitted if they form a set with the top card on the
-    discard pile, eg you can play $6\ \diamondsuit, 6\ \spadesuit$ if there is a 
-    $6\ \clubsuit$ at the top of the discard pile.
+    discard pile, eg you can play \(6\ \diamondsuit, 6\ \spadesuit\) if there is a
+    \(6\ \clubsuit\) at the top of the discard pile.
 
     If there are special effect cards, only the top card has its effect. This
     means that it's a better idea to play
-    $9\ \clubsuit, 8\ \clubsuit, 7\ \clubsuit$
+    \(9\ \clubsuit, 8\ \clubsuit, 7\ \clubsuit\)
     than the other way round, as this gives the player another turn.
 
     If a card set is played while a 2-stack is building, only the last card of
@@ -251,35 +197,35 @@ Enter text > 3H
     \item User interface wise:
         \begin{itemize}
         \item I would have liked to implement a nicer UI (IUI interface) with
-        ncurses or a GUI toolkit like GTK+
+              ncurses or a GUI toolkit like GTK+
         \item This would go hand in hand with a better communication protocol
-        between game engine and IUI, likely using XML.
+              between game engine and IUI, likely using XML.
         \item I would also liked to have implemented proper user security using
-        a password scheme, with cryptographically secure hashing algorithms. A
-        user would only be allowed to see their private information with this
-        password, resulting in a genuinely fair solution for a one-screen card
-        game.
+              a password scheme, with cryptographically secure hashing
+              algorithms. A user would only be allowed to see their private
+              information with this password, resulting in a genuinely fair
+              solution for a one-screen card game.
         \item It would also have been cool for the program to automatically
-        generate possible moves, or at least detect when the user can't play and
-        pick up a card for them.
+              generate possible moves, or at least detect when the user can't
+              play and pick up a card for them.
         \end{itemize}
     \item The program is functional, but edge cases remain largely unaccounted
-    for:
+          for:
         \begin{itemize}
         \item The pack running out of cards just results in an access violation.
         \item Entering a negative user index results in catastrophic failure.
         \item Entering a maliciously large number of packs results in either
-        conversion error or dumb memory consumption likely resulting in kernel
-        killing.
+              conversion error or dumb memory consumption likely resulting in
+              kernel killing.
         \end{itemize}
     The list goes on.
     \item Various rules remain unimplemented:
         \begin{itemize}
         \item There isn't a joker card, let alone a handling mechanism for the
-        rule (see \ref{card:joker}).
+              rule (see \ref{card:joker}).
         \item Sets of cards aren't implemented (see \ref{rule:sets}).
         \item I haven't even thought of way to capure the ``last card'' rule
-        (see \ref{rule:lastcard}).
+              (see \ref{rule:lastcard}).
         \end{itemize}
     \end{itemize}
 
